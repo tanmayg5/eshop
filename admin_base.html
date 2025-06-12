@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- The block title allows child templates to set their own title -->
+    <title>{% block title %}Admin Panel{% endblock %} - eShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<!-- The 'body' tag is updated here with the gradient background -->
+<body class="bg-gradient-to-br from-amber-300 to-orange-400 min-h-screen">
+    <header class="bg-white/80 backdrop-blur-sm shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="{{ url_for('admin_dashboard') }}" class="text-2xl font-bold text-gray-800">eShop Admin Panel</a>
+            <div>
+                <a href="{{ url_for('admin_dashboard') }}" class="px-4 text-gray-700 hover:text-orange-600 font-semibold">Product Management</a>
+                <!-- You can add more admin links here later, e.g., Order Management -->
+                <a href="{{ url_for('dashboard') }}" class="px-4 text-gray-700 hover:text-orange-600 font-semibold">Main Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="px-4 text-red-600 hover:text-red-800 font-semibold">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <!-- Display flashed messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg shadow-lg text-lg {% if category == 'error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- This is where the content of child templates will be injected -->
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register - My Web App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles if needed, or for a specific font */
+        body {
+            font-family: 'Inter', sans-serif; /* A common, clean sans-serif font */
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-amber-300 to-orange-400 min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div id="form-container" class="bg-white p-8 sm:p-10 rounded-xl shadow-2xl w-full max-w-md">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4 text-center">
+                {% for category, message in messages %}
+                    <p class="p-3 rounded-lg text-sm
+                       {% if category == 'error' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}" role="alert">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <div id="login-form">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Welcome Back!</h2>
+            
+            <form action="{{ url_for('login') }}" method="POST"> <div class="mb-6">
+                    <label for="login-username" class="block text-gray-700 text-sm font-semibold mb-2">Username</label>
+                    <input type="text" id="login-username" name="username" required
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
+                           placeholder="Enter your username">
+                </div>
+                <div class="mb-8">
+                    <label for="login-password" class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+                    <input type="password" id="login-password" name="password" required
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
+                           placeholder="Enter your password">
+                </div>
+                <button type="submit"
+                        class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-200 transform hover:scale-105">
+                    Login
+                </button>
+            </form>
+            <p class="text-center text-gray-600 text-sm mt-8">
+                Don't have an account? 
+                <button onclick="showRegisterForm()" class="text-orange-600 hover:text-orange-700 font-semibold focus:outline-none">
+                    Register here
+                </button>
+            </p>
+        </div>
+
+        <div id="register-form" class="hidden">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Create Account</h2>
+            
+            <form action="{{ url_for('register') }}" method="POST"> <div class="mb-6">
+                    <label for="register-username" class="block text-gray-700 text-sm font-semibold mb-2">Username</label>
+                    <input type="text" id="register-username" name="username" required
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
+                           placeholder="Choose a username">
+                </div>
+                <div class="mb-6">
+                    <label for="register-password" class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+                    <input type="password" id="register-password" name="password" required
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
+                           placeholder="Create a password">
+                </div>
+                 <div class="mb-8">
+                    <label for="register-confirm-password" class="block text-gray-700 text-sm font-semibold mb-2">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" name="confirm_password" required
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
+                           placeholder="Confirm your password">
+                </div>
+                <button type="submit"
+                        class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-200 transform hover:scale-105">
+                    Register
+                </button>
+            </form>
+            <p class="text-center text-gray-600 text-sm mt-8">
+                Already have an account? 
+                <button onclick="showLoginForm()" class="text-orange-600 hover:text-orange-700 font-semibold focus:outline-none">
+                    Login here
+                </button>
+            </p>
+        </div>
+
+        <div id="status-message-js" class="mt-6 text-center text-sm">
+        </div>
+
+    </div>
+
+    <script>
+        // Basic JavaScript to toggle between login and registration forms
+        const loginFormDiv = document.getElementById('login-form');
+        const registerFormDiv = document.getElementById('register-form');
+        const statusMessageJsDiv = document.getElementById('status-message-js');
+
+        function showRegisterForm() {
+            loginFormDiv.classList.add('hidden');
+            registerFormDiv.classList.remove('hidden');
+            if (statusMessageJsDiv) statusMessageJsDiv.textContent = ''; // Clear any JS messages
+            // Flashed messages from Flask will remain until the next server interaction that clears/replaces them.
+        }
+
+        function showLoginForm() {
+            registerFormDiv.classList.add('hidden');
+            loginFormDiv.classList.remove('hidden');
+            if (statusMessageJsDiv) statusMessageJsDiv.textContent = ''; // Clear any JS messages
+        }
+
+        // If you want to handle form submissions with JavaScript (Fetch API) for an SPA-like feel:
+        // You would prevent default form submission, send data with fetch,
+        // and then update the DOM (including status messages) based on the JSON response from Flask.
+        // For now, the forms submit via standard HTTP POST requests, and Flask handles redirection
+        // and re-rendering with flashed messages.
+    </script>
+
+</body>
+</html>
