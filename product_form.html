@@ -1,0 +1,75 @@
+{% extends "admin_base.html" %}
+
+<!-- The page title changes dynamically based on whether a 'product' object was passed from Flask -->
+{% block title %}{% if product %}Edit Product{% else %}Add Product{% endif %}{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-gray-800 mb-6">
+    <!-- The heading also changes dynamically -->
+    {% if product %}
+        Edit Product
+    {% else %}
+        Add New Product
+    {% endif %}
+</h1>
+
+<div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+    <!-- The form's 'action' URL is passed from the Flask route, making it reusable. -->
+    <!-- enctype="multipart/form-data" is CRUCIAL for allowing file (image) uploads. -->
+    <form method="POST" action="{{ action_url }}" enctype="multipart/form-data">
+        <div class="mb-4">
+            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
+            <!-- The 'value' is pre-filled if 'product.name' exists, otherwise it's empty. -->
+            <input type="text" name="name" id="name" value="{{ product.name or '' }}" required
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+
+        <div class="mb-4">
+            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+            <!-- The textarea content is pre-filled if 'product.description' exists. -->
+            <textarea name="description" id="description" rows="4"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ product.description or '' }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <div>
+                <label for="price" class="block text-gray-700 text-sm font-bold mb-2">Price ($)</label>
+                <!-- 'step="0.01"' allows for decimal values for price. -->
+                <input type="number" step="0.01" name="price" id="price" value="{{ product.price or '' }}" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label for="stock_quantity" class="block text-gray-700 text-sm font-bold mb-2">Stock Quantity</label>
+                <!-- 'step="1"' ensures only whole numbers for stock. -->
+                <input type="number" step="1" name="stock_quantity" id="stock_quantity" value="{{ product.stock_quantity or '' }}" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Product Image</label>
+            <!-- If editing and an image already exists, show the current image. -->
+            {% if product and product.image_url %}
+            <div class="mb-2">
+                <p class="text-sm text-gray-600">Current image:</p>
+                <img src="{{ url_for('static', filename=product.image_url) }}" alt="Current Image" class="w-32 h-32 object-cover rounded">
+            </div>
+            <p class="text-sm text-gray-600">Upload a new image to replace the current one:</p>
+            {% endif %}
+            <!-- 'accept' attribute suggests to the browser which file types are preferred. -->
+            <input type="file" name="image" id="image" accept="image/png, image/jpeg, image/gif"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <!-- The button text also changes dynamically. -->
+                {% if product %}Update Product{% else %}Save Product{% endif %}
+            </button>
+            <a href="{{ url_for('admin_dashboard') }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
