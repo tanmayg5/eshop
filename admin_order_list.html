@@ -1,0 +1,63 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Order Management{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Order Management</h1>
+</div>
+
+<div class="bg-white shadow-md rounded-lg overflow-x-auto">
+    <table class="min-w-full leading-normal">
+        <thead>
+            <tr>
+                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order ID</th>
+                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
+                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
+                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p class="text-gray-900 whitespace-no-wrap">#{{ order.id }}</p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p class="text-gray-900 whitespace-no-wrap">{{ order.username }}</p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p class="text-gray-900 whitespace-no-wrap">{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p class="text-gray-900 whitespace-no-wrap">${{ "%.2f"|format(order.total_price) }}</p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <span class="relative inline-block px-3 py-1 font-semibold leading-tight
+                        {% if order.status == 'Delivered' %} text-green-900
+                        {% elif order.status == 'Shipped' %} text-blue-900
+                        {% elif order.status == 'Cancelled' %} text-red-900
+                        {% else %} text-yellow-900 {% endif %}">
+                        <span aria-hidden class="absolute inset-0 
+                            {% if order.status == 'Delivered' %} bg-green-200
+                            {% elif order.status == 'Shipped' %} bg-blue-200
+                            {% elif order.status == 'Cancelled' %} bg-red-200
+                            {% else %} bg-yellow-200 {% endif %} opacity-50 rounded-full"></span>
+                        <span class="relative">{{ order.status }}</span>
+                    </span>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="text-indigo-600 hover:text-indigo-900">View Details</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-10 text-gray-500">No orders found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
